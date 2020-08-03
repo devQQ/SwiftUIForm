@@ -43,7 +43,7 @@ extension ValidationSchema {
     }
     
     public func validate() -> ValidationPublisher {
-        let publisher: ValidationPublisher = publishers.combineLatest.map({results in
+        let publisher: ValidationPublisher = publishers.combineLatest().map({results in
             
             for result in results {
                 if case .failure = result {
