@@ -52,8 +52,6 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: UIScrollView, context: Context) {
-        uiView.isScrollEnabled = keyboardHeight > 0
-        
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
         uiView.contentInset = insets
         uiView.scrollIndicatorInsets = insets
