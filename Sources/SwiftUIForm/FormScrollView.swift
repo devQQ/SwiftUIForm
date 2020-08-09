@@ -16,7 +16,7 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
         init(_ parent: FormScrollView) {
             self.parent = parent
         }
-        
+
         public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
             isAnimating = false
         }
@@ -34,6 +34,7 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
     
     public func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView(frame: .zero)
+        scrollView.backgroundColor = .clear
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.bounces = false
@@ -44,6 +45,7 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
         scrollView.contentSize = CGSize(width: size.width, height: size.height)
         
         let vc = UIHostingController(rootView: content())
+        vc.view.backgroundColor = .clear
         vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         scrollView.addSubview(vc.view)
@@ -55,24 +57,25 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
         uiView.contentInset = insets
         uiView.scrollIndicatorInsets = insets
-        
-        guard activeFrame != context.coordinator.animatedFrame,
-            !context.coordinator.isAnimating else {
-                return
-        }
-        
+
         context.coordinator.animatedFrame = activeFrame
         
         if activeFrame.origin.y > 0 {
             var globalFrame = UIScreen.main.bounds
-            globalFrame.size.height -= keyboardHeight
+            //64 pixels for buffer
+            //44 pixels for typical textfield height
+            globalFrame.size.height -= (keyboardHeight + 64.0 + 44.0)
+            
+            //give some buffer for the textfield just in case there is an input accessory view
+            var visibleFrame = activeFrame
+            visibleFrame.origin.y -= 44.0
             
             guard !globalFrame.contains(activeFrame.origin) else {
                 return
             }
             
             context.coordinator.isAnimating = true
-            uiView.scrollRectToVisible(activeFrame, animated: true)
+            uiView.scrollRectToVisible(visibleFrame, animated: true)
         } else {
             uiView.setContentOffset(.zero, animated: true)
         }
