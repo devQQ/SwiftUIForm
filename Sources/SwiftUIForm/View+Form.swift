@@ -14,18 +14,10 @@ public struct FormKeyboardObserverViewModifier: ViewModifier {
     @Binding var activeFrame: CGRect
     
     public func body(content: Content) -> some View {
-        if #available(iOS 14.0, *) {
-            return content
-                .edgesIgnoringSafeArea(self.keyboardHeight > 0 ? .bottom : [])
-                .animation(.easeInOut(duration: self.keyboardAnimationDuration))
-                .ignoresSafeArea(.keyboard, edges: .all)
-                .eraseToAnyView()
-        } else {
-            return content
-                .edgesIgnoringSafeArea(self.keyboardHeight > 0 ? .bottom : [])
-                .animation(.easeInOut(duration: self.keyboardAnimationDuration))
-                .eraseToAnyView()
-        }
+        content
+            .edgesIgnoringSafeArea(self.keyboardHeight > 0 ? .bottom : [])
+            .animation(.easeInOut(duration: self.keyboardAnimationDuration))
+            .eraseToAnyView()
     }
 }
 
@@ -46,7 +38,7 @@ public struct FormViewModifier: ViewModifier {
                 .background(Color.white.opacity(0.01))
                 .onTapGesture {
                     UIApplication.shared.hideKeyboard()
-            }
+                }
             
             content
         }

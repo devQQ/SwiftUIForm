@@ -12,6 +12,7 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
         let parent: FormScrollView
         var isAnimating: Bool = false
         var animatedFrame: CGRect = .zero
+        var cacheActiveFrame: CGRect = .zero
         
         init(_ parent: FormScrollView) {
             self.parent = parent
@@ -70,13 +71,16 @@ public struct FormScrollView<Content: View>: UIViewRepresentable {
             var visibleFrame = activeFrame
             visibleFrame.origin.y -= 44.0
             
-            guard !globalFrame.contains(activeFrame.origin) else {
+            guard !globalFrame.contains(activeFrame.origin) &&
+                    context.coordinator.cacheActiveFrame != activeFrame else {
                 return
             }
             
             context.coordinator.isAnimating = true
             uiView.scrollRectToVisible(visibleFrame, animated: true)
+            context.coordinator.cacheActiveFrame = activeFrame
         } else {
+            context.coordinator.cacheActiveFrame = .zero
             uiView.setContentOffset(.zero, animated: true)
         }
     }
