@@ -14,10 +14,17 @@ public struct FormKeyboardObserverViewModifier: ViewModifier {
     @Binding var activeFrame: CGRect
     
     public func body(content: Content) -> some View {
-        FormScrollView(keyboardHeight: self.$keyboardHeight, activeFrame: $activeFrame) {
-            content
+        if #available(iOS 14.0, *) {
+            return content
                 .edgesIgnoringSafeArea(self.keyboardHeight > 0 ? .bottom : [])
                 .animation(.easeInOut(duration: self.keyboardAnimationDuration))
+                .ignoresSafeArea(.keyboard, edges: .all)
+                .eraseToAnyView()
+        } else {
+            return content
+                .edgesIgnoringSafeArea(self.keyboardHeight > 0 ? .bottom : [])
+                .animation(.easeInOut(duration: self.keyboardAnimationDuration))
+                .eraseToAnyView()
         }
     }
 }
